@@ -12,6 +12,7 @@
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
@@ -83,13 +84,22 @@
       }`;
       wrapper.style.maxWidth = "80%";
       wrapper.style.alignSelf = who === "user" ? "flex-end" : "flex-start";
+      wrapper.style.whiteSpace = "pre-wrap";        // NEW
+      wrapper.style.wordWrap = "break-word";        // NEW
+      wrapper.style.overflowWrap = "break-word";    // NEW
 
-      wrapper.innerHTML = text;
+
+      // 🔥 Convert Markdown → HTML
+      const html = marked.parse(text);
+
+      wrapper.innerHTML = html;
 
       messagesDiv.appendChild(wrapper);
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-      if (window.MathJax) MathJax.typesetPromise([wrapper]);
+      // 🔥 Render LaTeX formulas AFTER markdown
+      if (window.MathJax) {
+        MathJax.typesetPromise([wrapper]);
     }
 
     // --- LOAD HISTORY ---
